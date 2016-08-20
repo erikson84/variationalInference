@@ -52,7 +52,17 @@ approximation strategy, so that results can be compared.
 
 # Comparison between approximations
 
-![Variational and Gibbs Posterior Approximations](varAndGibb.png)
+![Variational and Gibbs Posterior Approximations](./varAndGibbs.png)
+
+The posterior distribution for the main parameters are shown in the plot above.
+The black curve is the density estimation based on the posterior samples obtained with
+the Gibbs algorithm. In blue, the approximation based on variational hyperparameters.
+The vertical dashed line indicates the true parameter value.
+
+The mode and the mean coincide almost exactly for all six parameters. But the variational
+approximation grossly underestimates the posterior uncertainty. This is a known "feature" of
+variational approximations, given that the variational family usually assumes more independence
+between parameters than the true model.
 
 # Next steps
 
