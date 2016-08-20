@@ -23,6 +23,11 @@ varMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, epsilon=0.0001,
   
   # Initialize g_nk, each data point responsability
   gnk <- init
+  # To avoid underflow
+  if (any(gnk==0)){
+    gnk <- gnk+min(gnk[gnk!=0])
+    gnk <- t(apply(gnk, 1, function(x) x/sum(x)))
+  }
   
   # Compute some quantities we need...
   Nk <- apply(gnk, 2, sum)
