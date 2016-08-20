@@ -1,3 +1,5 @@
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+
 # Variational Bayesian Inference
 
 It's well known that computing the posterior distribution of model parameters is
