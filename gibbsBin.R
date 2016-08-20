@@ -19,6 +19,9 @@
 library(gtools) # Needed for Rdirichlet initialization
 gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=1000, iters=2000){
   N <- length(y)  
+  if (length(Nt)==1){
+    Nt <- rep(Nt, N)
+  }
   # Random initialization
   phi <- rdirichlet(1, rep(eta, K))
   theta <- rbeta(K, alpha, beta)
