@@ -1,16 +1,39 @@
+# A simple, non-optimized Gibbs sampler for a mixture of binomials.
+# Used mainly to check the results from the variational algorithm.
+# As the variational model, assumes the total number of trials is known.
+# Parameters:
+# y: integer vector of successes
+# Nt: integer scalar or vector of total number of trials
+# alpha, beta: positive real scalars of prior hyperparameters for theta
+# eta: positive real vector of prior hyperparameter for phi
+# warmup: number of initian iterations to discard
+# iters: total number of iterations
+# Returns:
+# A names list with:
+# phi: vector of cluster proportions
+# theta: binomial parameter for each cluster
+# Z: cluster attribution for each datapoint
+
+library(gtools) # Needed for Rdirichlet initialization
 gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=2000, iters=5000){
   N <- length(y)  
+  # Random initialization
   phi <- rdirichlet(1, rep(eta, K))
   theta <- rbeta(K, alpha, beta)
   Z <- sample(1:K, N, replace = T, prob=phi)
   out <- list(phi=phi, theta=theta, Z=Z)
   
   for (i in 1:iters){
+    # Uses a loop to generate count instead of 'table' function
+    # in case one cluster remains with zero counts
     tableZ <- rep(NA, K)
     for (k in 1:K){
       tableZ[k] <- sum(Z==k)
     }
+    
+    # Update phi parameter based on full conditional
     phi <- rdirichlet(1, eta+tableZ)
+    # Update Z cluster attribution vector
     Z <- rep(NA, N)
     for (z in 1:N){
       Z[z] <- sample(1:K, 1, prob=phi*dbinom(y[z], Nt, theta))
@@ -20,10 +43,7 @@ gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=2000, iters=
       theta[k] <- rbeta(1, alpha + sum(y[Z==k]), beta + sum(Nt - y[Z==k]))
     }
     if (i > warmup){
-      if (((i/iters) %% 0.1) ==0){
-        cat((i/iters) * 100)
-        cat('\n')
-      }
+      
       out <- list(phi=rbind(out$phi, phi), theta=rbind(out$theta, theta), Z=rbind(out$Z, Z))
     }
   }

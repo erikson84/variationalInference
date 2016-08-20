@@ -1,3 +1,6 @@
+source('varBin.R')
+source('gibbsBin.R')
+
 K <- 3
 phi <- rdirichlet(1, rep(1/K, K))
 theta <- rbeta(K, 1, 1)
