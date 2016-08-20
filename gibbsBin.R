@@ -17,7 +17,7 @@
 # Z: cluster attribution for each datapoint
 
 library(gtools) # Needed for Rdirichlet initialization
-gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=2000, iters=5000){
+gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=1000, iters=2000){
   N <- length(y)  
   # Random initialization
   phi <- rdirichlet(1, rep(eta, K))
@@ -26,6 +26,7 @@ gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=2000, iters=
   out <- list(phi=phi, theta=theta, Z=Z)
   
   for (i in 1:iters){
+    if ((((i/iters)*100) %% 10) == 0) {cat(paste(' ', (i/iters)*100, '%', collapse='', sep=''))}
     # Uses a loop to generate count instead of 'table' function
     # in case one cluster remains with zero counts
     tableZ <- rep(NA, K)
@@ -38,12 +39,12 @@ gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=2000, iters=
     # Update Z cluster attribution vector
     Z <- rep(NA, N)
     for (z in 1:N){
-      Z[z] <- sample(1:K, 1, prob=phi*dbinom(y[z], Nt, theta))
+      Z[z] <- sample(1:K, 1, prob=phi*dbinom(y[z], Nt[z], theta))
     }
     #Update theta parameters
     theta <- rep(NA, K)
     for (k in 1:K){
-      theta[k] <- rbeta(1, alpha + sum(y[Z==k]), beta + sum(Nt - y[Z==k]))
+      theta[k] <- rbeta(1, alpha + sum(y[Z==k]), beta + sum(Nt[Z==k] - y[Z==k]))
     }
     # Write random samples to output
     if (i > warmup){
