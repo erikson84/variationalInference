@@ -1,6 +1,7 @@
 # A simple, non-optimized Gibbs sampler for a mixture of binomials.
 # Used mainly to check the results from the variational algorithm.
 # As the variational model, assumes the total number of trials is known.
+
 # Parameters:
 # y: integer vector of successes
 # Nt: integer scalar or vector of total number of trials
@@ -8,6 +9,7 @@
 # eta: positive real vector of prior hyperparameter for phi
 # warmup: number of initian iterations to discard
 # iters: total number of iterations
+
 # Returns:
 # A names list with:
 # phi: vector of cluster proportions
@@ -38,12 +40,13 @@ gibbsMixBern <- function(y, Nt, K, alpha=1, beta=1, eta=1/K, warmup=2000, iters=
     for (z in 1:N){
       Z[z] <- sample(1:K, 1, prob=phi*dbinom(y[z], Nt, theta))
     }
+    #Update theta parameters
     theta <- rep(NA, K)
     for (k in 1:K){
       theta[k] <- rbeta(1, alpha + sum(y[Z==k]), beta + sum(Nt - y[Z==k]))
     }
+    # Write random samples to output
     if (i > warmup){
-      
       out <- list(phi=rbind(out$phi, phi), theta=rbind(out$theta, theta), Z=rbind(out$Z, Z))
     }
   }
