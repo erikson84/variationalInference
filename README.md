@@ -50,8 +50,13 @@ A simple and non-optimized Gibbs sampler is also provided for the same model.
 Its purpose is to compute the posterior for the same dataset using a different
 approximation strategy, so that results can be compared.
 
+# Comparison between approximations
+
+![Variational and Gibbs Posterior Approximations](varAndGibb.png)
+
 # Next steps
 
 I am also making a notebook showing the derivation of the variational distributions,
 the ELBO for the model, and the complete conditionals for the Gibbs sampler. Soon!
+
 
