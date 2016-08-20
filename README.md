@@ -31,7 +31,7 @@ according to its *mixture* parameter.
 This repository implements a simple variational algorithm to fit a mixture of binomials model
 to a vector of observed successes and a known number of total trials. The model is heavily based
 on Bishop's *Pattern Recognition and Machine Learning*, specially the section 10.2 where he
-derives the variational algorithm to fir a mixture of Gaussians.
+derives the variational algorithm to fit a mixture of Gaussians.
 
 The proposed mixture model can be easily understood from a data-generation perspective. Assuming
 that the total number of trials for each observation, $N_t$, is known; and given
