@@ -2,7 +2,7 @@ library(gtools)
 source('varBin.R')
 source('gibbsBin.R')
 
-set.seed(300)
+set.seed(2010)
 # Set the number of clusters
 # The variational algorithm is pretty fast
 # even with hundred of clusters. But the Gibbs
@@ -16,12 +16,37 @@ Z <- sample(1:K, 2000, replace=T, phi)
 y <- rbinom(2000, Nt, theta[Z])
 
 # Use the variational algorith to approximate the posterior
-teste <- varMixBern(y, Nt=Nt, K=3)
-apply(teste$alphaBetaVar, 1, function(x) x[1]/sum(x))
-teste$etaVar/sum(teste$etaVar)
-teste$ELBO
+testVar <- varMixBern(y, Nt=Nt, K=3)
+apply(testVar$alphaBetaVar, 1, function(x) x[1]/sum(x))
+testVar$etaVar/sum(testVar$etaVar)
+testVar$ELBO
 
 # Use the Gibbs sampling algorithm to approximate the posterior
-testeGibbs <- gibbsMixBern(y, Nt=Nt, K=3)
-apply(testeGibbs$phi, 2, mean)
-apply(testeGibbs$theta, 2, mean)
+testGibbs <- gibbsMixBern(y, Nt=Nt, K=3)
+apply(testGibbs$phi, 2, mean)
+apply(testGibbs$theta, 2, mean)
+
+par(mfrow=c(2, 3))
+plot(density(testGibbs$theta[,1], bw=.005), xlab='theta[1]', main='Posterior for theta[1]', ylim=c(0, 70))
+curve(dbeta(x, testVar$alphaBetaVar[1, 1], testVar$alphaBetaVar[1, 2]), add=T, col='blue')
+abline(v=theta[1], lty=2)
+
+plot(density(testGibbs$theta[,2], bw=.005), xlab='theta[2]', main='Posterior for theta[2]', ylim=c(0, 110))
+curve(dbeta(x, testVar$alphaBetaVar[2, 1], testVar$alphaBetaVar[2, 2]), add=T, col='blue')
+abline(v=theta[3], lty=2)
+
+plot(density(testGibbs$theta[,3], bw=.005), xlab='theta[3]', main='Posterior for theta[3]', ylim=c(0, 250))
+curve(dbeta(x, testVar$alphaBetaVar[3, 1], testVar$alphaBetaVar[3, 2]), add=T, col='blue')
+abline(v=theta[2], lty=2)
+
+plot(density(testGibbs$phi[,1], bw=.005), xlab='phi[1]', main='Posterior for phi[1]', ylim=c(0, 70))
+curve(dbeta(x, testVar$etaVar[1], sum(testVar$etaVar[c(2, 3)])), add=T, col='blue')
+abline(v=phi[1], lty=2)
+
+plot(density(testGibbs$phi[,2], bw=.005), xlab='phi[2]', main='Posterior for phi[2]', ylim=c(0, 70))
+curve(dbeta(x, testVar$etaVar[2], sum(testVar$etaVar[c(1, 3)])), add=T, col='blue')
+abline(v=phi[3], lty=2)
+
+plot(density(testGibbs$phi[,3], bw=.005), xlab='phi[3]', main='Posterior for phi[3]', ylim=c(0, 70))
+curve(dbeta(x, testVar$etaVar[3], sum(testVar$etaVar[c(1, 2)])), add=T, col='blue')
+abline(v=phi[2], lty=2)
