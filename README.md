@@ -52,7 +52,7 @@ approximation strategy, so that results can be compared.
 
 # Comparison between approximations
 
-![Variational and Gibbs Posterior Approximations](varAndGibb.png)
+![Variational and Gibbs Posterior Approximations](./varAndGibbs.png)
 
 # Next steps
 
